@@ -7,11 +7,9 @@ module.exports = (shouldLog, dec) => {
     if (!isFn(task)) 
       throw new Error("task must be fn");
     if (!isPos(n)) 
-      throw new Error("iterations must be non-zero finite num");
+      throw new Error("iterations must be non-zero, finite num");
     const t0 = hrtime();
-    for (let i = n; i--;){
-      task()
-    }
+    for (let i = n; i--;) task();
     const dt = hrtime(t0);
     if (shouldLog){
       const msg = `${task.name || "task"} x ${n} took ${pretty(dt, dec)}`;

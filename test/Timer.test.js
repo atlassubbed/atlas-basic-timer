@@ -25,7 +25,7 @@ describe("Timer", function(){
       const timer = Timer(false);
       const invalidTasks = [{}, new Date(), null, true, "", /reg/, [], NaN, Infinity];
       invalidTasks.forEach(iterations => {
-        expect(() => timer(() => {}, iterations)).to.throw("iterations must be non-zero finite num")
+        expect(() => timer(() => {}, iterations)).to.throw("iterations must be non-zero, finite num")
       })
     })
     it("should run the task once if no number of iterations specified", function(){
@@ -42,12 +42,20 @@ describe("Timer", function(){
       expect(calledTask).to.equal(iterations);
     })
     it("should return the how long the task took in nanoseconds", cleanup(function(){
-      const firstTime = 5, secondTime = 10;
+      const firstTime = 5, secondTime = 10, iterations = 10;
+      let calledTask = 0;
       revert = Timer.__set__({
-        "hrtime": oldTime => oldTime ? (secondTime-oldTime) : firstTime
+        "hrtime": oldTime => {
+          if (!oldTime) {
+            expect(calledTask).to.equal(0);
+            return firstTime
+          }
+          expect(calledTask).to.equal(iterations);
+          return secondTime - oldTime
+        }
       })
       const timer = Timer(false);
-      const deltaTime = timer(() => {}, 10);
+      const deltaTime = timer(() => calledTask++, iterations);
       expect(deltaTime).to.equal(secondTime - firstTime)
     }))
     it("should not log anything", cleanup(function(){
