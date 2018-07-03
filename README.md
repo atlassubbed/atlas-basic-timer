@@ -18,7 +18,7 @@ I have re-written simple timer scripts so many times, I figured I'd just write a
 
 ## examples
 
-For the examples, let's assume we have a `randomArray` function which returns a new Array of `100` random numbers between `0` and `1`.
+For the examples, let's assume we have a `randomArray` function which returns a new `Array` of `100` random numbers between `0` and `1`.
 
 #### run a timing test
 
