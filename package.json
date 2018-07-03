@@ -6,7 +6,7 @@
     "test-server": "mocha --colors --watch --recursive './test/**/*.test.js'",
     "test": "mocha --colors --recursive './test/**/*.test.js'"
   },
-  "main": "./src/index.js",
+  "main": "./src/Timer.js",
   "keywords": [
     "atlassubbed",
     "utils",
@@ -20,8 +20,10 @@
   "author": "atlassubbed <atlassubbed@gmail.com>",
   "license": "Apache-2.0",
   "devDependencies": {
+    "atlas-cleanup-tests": "^1.0.2",
     "chai": "^4.1.2",
-    "mocha": "^5.2.0"
+    "mocha": "^5.2.0",
+    "rewire": "^4.0.1"
   },
   "os": [
     "darwin",
@@ -36,5 +38,9 @@
   "repository": {
     "type": "git",
     "url": "https://github.com/atlassubbed/atlas-basic-timer.git"
+  },
+  "dependencies": {
+    "atlas-hrtime": "^1.0.1",
+    "atlas-pretty-hrtime": "^1.0.0"
   }
 }
