@@ -37,7 +37,6 @@ const durationNanosecs = timer(myTask)
 
 ```javascript
 ...
-const myTask = () => randomArray().sort();
 // runs myTask 1000 times
 const durationNanosecs = timer(myTask, 1000)
 // (logging output)
@@ -50,7 +49,6 @@ const durationNanosecs = timer(myTask, 1000)
 ...
 // if shouldLog, prints 6 decimal places (default 3)
 const timer = Timer(shouldLog, 6)
-const myTask = () => randomArray().sort();
 const durationNanosecs = timer(myTask, 1000)
 // (logging output)
 // myTask x 1000 took 15.474757ms
@@ -62,7 +60,6 @@ const durationNanosecs = timer(myTask, 1000)
 ...
 const shouldLog = false;
 const timer = Timer(shouldLog);
-const myTask = () => randomArray().sort();
 const durationNanosecs = timer(myTask, 1000)
 // (no log output)
 ```
