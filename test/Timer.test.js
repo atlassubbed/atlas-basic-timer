@@ -86,6 +86,20 @@ describe("Timer", function(){
         timer(() => {}, 10)
         expect(calledLog).to.be.true;
       }))
+      it("should log the time diff in the specified precision", cleanup(function(){
+        const firstTime = 5, secondTime = 10;
+        let calledLog = false;
+        revert = Timer.__set__({
+          "console.log": msg => {
+            calledLog = true;
+            expect(msg).to.equal(`task x 10 took 5.000000ns`)
+          },
+          "hrtime": oldTime => oldTime ? (secondTime-oldTime) : firstTime
+        })
+        const timer = Timer(true, 6);
+        timer(() => {}, 10)
+        expect(calledLog).to.be.true;
+      }))
     })
   })
 })

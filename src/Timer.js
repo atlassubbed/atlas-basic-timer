@@ -2,7 +2,7 @@ const hrtime = require("atlas-hrtime")();
 const pretty = require("atlas-pretty-hrtime");
 const { isPos, isFn } = require("./util")
 
-module.exports = shouldLog => {
+module.exports = (shouldLog, dec) => {
   return (task, n=1) => {
     if (!isFn(task)) 
       throw new Error("task must be fn");
@@ -14,7 +14,7 @@ module.exports = shouldLog => {
     }
     const dt = hrtime(t0);
     if (shouldLog){
-      const msg = `${task.name || "task"} x ${n} took ${pretty(dt)}`;
+      const msg = `${task.name || "task"} x ${n} took ${pretty(dt, dec)}`;
       console.log(msg);
     }
     return dt;
