@@ -54,7 +54,7 @@ const durationNanosecs = timer(myTask)
 // ~$ myTask x 1000 took 15.474757ms
 ```
 
-Note that the `durationNanoseconds` return value will never be rounded, only the logged output is rounded.
+Note that the `durationNanosecs` return value will never be rounded, only the logged output is rounded.
 
 #### disable logs
 
