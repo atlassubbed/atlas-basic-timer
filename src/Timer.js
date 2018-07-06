@@ -2,18 +2,18 @@ const hrtime = require("atlas-hrtime")();
 const pretty = require("atlas-pretty-hrtime");
 const { isPos, isFn } = require("./util")
 
-module.exports = (shouldLog, dec) => {
-  return (task, n=1) => {
+module.exports = ({log = true, dec = 3, n = 1}={}) => {
+  if (!isPos(n)) throw new Error("n must be non-zero, finite num")
+  return task => {
     if (!isFn(task)) 
       throw new Error("task must be fn");
-    if (!isPos(n)) 
-      throw new Error("iterations must be non-zero, finite num");
     const t0 = hrtime();
     for (let i = n; i--;) task();
     const dt = hrtime(t0);
-    if (shouldLog){
-      const msg = `${task.name || "task"} x ${n} took ${pretty(dt, dec)}`;
-      console.log(msg);
+    if (log){
+      const name = task.name || "task";
+      const time = pretty(dt, dec);
+      console.log(`${name} x ${n} took ${time}`)
     }
     return dt;
   }

@@ -10,39 +10,35 @@ const cleanup = Cleaner(() => revert && revert())
 
 describe("Timer", function(){
   it("should return a timer", function(){
-    const timer = Timer(false);
-    expect(timer).to.be.a("function");
+    expect(Timer({log: false})).to.be.a("function");
+  })
+  it("should throw error if given invalid number of iterations", function(){
+    const invalidNs = [{}, () => {}, new Date(), null, true, "", /reg/, [], NaN, Infinity, -20, -Infinity];
+    invalidNs.forEach(n => {
+      expect(() => Timer({n})).to.throw("n must be non-zero, finite num")
+    })
   })
   describe("timer", function(){
     it("should throw error if not given a valid task", function(){
-      const timer = Timer(false);
+      const timer = Timer({log: false});
       const invalidTasks = [{}, new Date(), 4, 5.6, null, undefined, true, "", /reg/, []];
       invalidTasks.forEach(task => {
         expect(() => timer(task)).to.throw("task must be fn")
       })
     })
-    it("should throw error if given invalid number of iterations", function(){
-      const timer = Timer(false);
-      const invalidTasks = [{}, new Date(), null, true, "", /reg/, [], NaN, Infinity];
-      invalidTasks.forEach(iterations => {
-        expect(() => timer(() => {}, iterations)).to.throw("iterations must be non-zero, finite num")
-      })
-    })
     it("should run the task once if no number of iterations specified", function(){
       let calledTask = 0;
-      const timer = Timer(false);
-      timer(() => calledTask++)
+      Timer({log: false})(() => calledTask++)
       expect(calledTask).to.equal(1);
     })
     it("should run the task multiple times if number of iterations specified", function(){
-      const iterations = 100;
+      const n = 100;
       let calledTask = 0;
-      const timer = Timer(false);
-      timer(() => calledTask++, iterations)
-      expect(calledTask).to.equal(iterations);
+      Timer({n, log: false})(() => calledTask++)
+      expect(calledTask).to.equal(n);
     })
     it("should return the how long the task took in nanoseconds", cleanup(function(){
-      const firstTime = 5, secondTime = 10, iterations = 10;
+      const firstTime = 5, secondTime = 10, n = 10;
       let calledTask = 0;
       revert = Timer.__set__({
         "hrtime": oldTime => {
@@ -50,22 +46,20 @@ describe("Timer", function(){
             expect(calledTask).to.equal(0);
             return firstTime
           }
-          expect(calledTask).to.equal(iterations);
+          expect(calledTask).to.equal(n);
           return secondTime - oldTime
         }
       })
-      const timer = Timer(false);
-      const deltaTime = timer(() => calledTask++, iterations);
+      const deltaTime = Timer({n, log:false})(() => calledTask++);
       expect(deltaTime).to.equal(secondTime - firstTime)
     }))
     it("should not log anything", cleanup(function(){
       let calledLog = false;
       revert = Timer.__set__("console.log", msg => {calledLog = true})
-      const timer = Timer(false);
-      timer(() => {}, 10)
+      Timer({log:false, n:10})(() => {})
       expect(calledLog).to.be.false;
     }))
-    describe("logging mode", function(){
+    describe("default logging mode", function(){
       it("should log correct stats for a named task", cleanup(function(){
         const firstTime = 5, secondTime = 10, myTask = () => {};
         let calledLog = false;
@@ -76,8 +70,7 @@ describe("Timer", function(){
           },
           "hrtime": oldTime => oldTime ? (secondTime-oldTime) : firstTime
         })
-        const timer = Timer(true);
-        timer(myTask, 10)
+        Timer({n:10})(myTask)
         expect(calledLog).to.be.true;
       }))
       it("should log correct stats for an anonymous task", cleanup(function(){
@@ -90,8 +83,7 @@ describe("Timer", function(){
           },
           "hrtime": oldTime => oldTime ? (secondTime-oldTime) : firstTime
         })
-        const timer = Timer(true);
-        timer(() => {}, 10)
+        Timer({n:10})(() => {})
         expect(calledLog).to.be.true;
       }))
       it("should log the time diff in the specified precision", cleanup(function(){
@@ -104,8 +96,7 @@ describe("Timer", function(){
           },
           "hrtime": oldTime => oldTime ? (secondTime-oldTime) : firstTime
         })
-        const timer = Timer(true, 6);
-        timer(() => {}, 10)
+        Timer({n:10, dec: 6})(() => {})
         expect(calledLog).to.be.true;
       }))
     })

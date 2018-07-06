@@ -24,42 +24,43 @@ For the examples, let's assume we have a `randomArray` function which returns a 
 
 ```javascript
 const Timer = require("atlas-basic-timer");
-const shouldLog = true;
-const timer = Timer(shouldLog);
 const myTask = () => randomArray().sort();
-// runs myTask, returns duration in nanoseconds
-const durationNanosecs = timer(myTask)
-// (logging output)
-// myTask x 1 took 142.571us
+// make a new timer
+const myTimer = Timer();
+// run myTask once, return duration in ns
+const durationNanosecs = myTimer(myTask)
+// ~$ myTask x 1 took 142.571us
 ```
 
 #### specify a number of iterations
 
 ```javascript
 ...
-// runs myTask 1000 times
-const durationNanosecs = timer(myTask, 1000)
-// (logging output)
-// myTask x 1000 took 15.475ms
+// we want n = 1000 iterations
+const myTimer = Timer({n: 1000});
+const durationNanosecs = timer(myTask)
+// ~$ myTask x 1000 took 15.475ms
 ```
 
 #### specify higher precision
 
+By default, the logged output time will be rounded to 3 decimal places. You can tell the timer to use more accuracy:
+
 ```javascript
 ...
-// if shouldLog, prints 6 decimal places (default 3)
-const timer = Timer(shouldLog, 6)
-const durationNanosecs = timer(myTask, 1000)
-// (logging output)
-// myTask x 1000 took 15.474757ms
+// we want 6 decimal places in the log output
+const myTimer = Timer({dec: 6, n: 1000})
+const durationNanosecs = timer(myTask)
+// ~$ myTask x 1000 took 15.474757ms
 ```
+
+Note that the `durationNanoseconds` return value will never be rounded, only the logged output is rounded.
 
 #### disable logs
 
 ```javascript
 ...
-const shouldLog = false;
-const timer = Timer(shouldLog);
+// we don't want to log anything to the console
+const myTimer = Timer({log: false, n: 1000})
 const durationNanosecs = timer(myTask, 1000)
-// (no log output)
 ```
