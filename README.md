@@ -64,3 +64,7 @@ Note that the `durationNanoseconds` return value will never be rounded, only the
 const myTimer = Timer({log: false, n: 1000})
 const durationNanosecs = timer(myTask, 1000)
 ```
+
+## todo
+
+Modify the timer to take an optional `done` callback, so async tasks could be timed. Async tasks would be run serially, with a serial-execution library.
