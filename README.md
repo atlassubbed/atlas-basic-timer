@@ -20,7 +20,7 @@ Optionally, you can use `stat` mode to obtain **more detailed statistics**, such
 
 ## examples
 
-For the examples, let's assume we have a `randomArray` function which returns a new `Array` of `100` random numbers between `0` and `1`.
+For the examples, let's assume we have a `randomArray` function which returns a new `Array` of `100` random numbers between `0` and `1`. 
 
 #### run a timing test
 
@@ -41,6 +41,26 @@ const durationNanosecs = myTimer(myTask)
 // we want n = 1000 iterations
 const myTimer = Timer({n: 1000});
 const durationNanosecs = myTimer(myTask)
+// ~$ myTask x 1000 took 15.475ms
+```
+
+#### run async timing tests
+
+Let's assume our random array method is async for this example.
+
+```javascript
+const myTask = done => {
+  randomArray(arr => {
+    arr.sort();
+    done();
+  })
+}
+const myTimer = Timer({n: 1000});
+// run myTask 1000 times in serial
+myTimer(myTask, (errs, durationNanosecs) => {
+  if (errs.length)
+    console.log(`${errs.length} tasks failed`);
+})
 // ~$ myTask x 1000 took 15.475ms
 ```
 
@@ -77,15 +97,11 @@ const stats = myTimer(myTask);
 // ~$ myTask x 1000 took 15.474757ms (12.432us +/- 1.321us)
 console.log(stats)
 // {
-//   n: 1000,
-//   elapsed: 15474757,
+//   size: 1000,
+//   total: 15474757,   // total elapsed time
 //   mean: 15474.757,
 //   stddev: 5482.2874,
 //   median: 12432.234,
-//   mad: 1321.21124
+//   mad: 1321.21124    // median absolute deviation
 // }
 ```
-
-## todo
-
-Modify the timer to take an optional `done` callback, so async tasks could be timed. Async tasks would be run serially, with a serial-execution library.
