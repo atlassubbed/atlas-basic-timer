@@ -16,6 +16,8 @@ npm install --save atlas-basic-timer
 
 I have re-written simple timer scripts so many times, I figured I'd just write a basic timer to use. This timer is simple -- it takes a task and a number of iterations, and tells you how long it ran in nanoseconds (not guaranteed to be accurate to nanoseconds, but uses `process.hrtime` if it's available).
 
+Optionally, you can use `stat` mode to obtain **more detailed statistics**, such as the mean and standard deviation.
+
 ## examples
 
 For the examples, let's assume we have a `randomArray` function which returns a new `Array` of `100` random numbers between `0` and `1`.
@@ -62,7 +64,24 @@ Note that the `durationNanosecs` return value will never be rounded, only the lo
 ...
 // we don't want to log anything to the console
 const myTimer = Timer({log: false, n: 1000})
-const durationNanosecs = timer(myTask, 1000)
+const durationNanosecs = timer(myTask)
+```
+
+#### getting more stats
+
+```javascript
+...
+// get more than just the elapsed time
+const myTimer = Timer({stat: true, n: 1000})
+const stats = timer(myTask);
+// ~$ myTask x 1000 took 15.474757ms (15.474us +/- 5.482us)
+console.log(stats)
+// {
+//   n: 1000,
+//   elapsed: 15474757,
+//   mean: 15474.757,
+//   stddev: 5482.2874,
+// }
 ```
 
 ## todo
