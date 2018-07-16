@@ -40,7 +40,7 @@ const durationNanosecs = myTimer(myTask)
 ...
 // we want n = 1000 iterations
 const myTimer = Timer({n: 1000});
-const durationNanosecs = timer(myTask)
+const durationNanosecs = myTimer(myTask)
 // ~$ myTask x 1000 took 15.475ms
 ```
 
@@ -52,7 +52,7 @@ By default, the logged output time will be rounded to 3 decimal places. You can 
 ...
 // we want 6 decimal places in the log output
 const myTimer = Timer({dec: 6, n: 1000})
-const durationNanosecs = timer(myTask)
+const durationNanosecs = myTimer(myTask)
 // ~$ myTask x 1000 took 15.474757ms
 ```
 
@@ -64,7 +64,7 @@ Note that the `durationNanosecs` return value will never be rounded, only the lo
 ...
 // we don't want to log anything to the console
 const myTimer = Timer({log: false, n: 1000})
-const durationNanosecs = timer(myTask)
+const durationNanosecs = myTimer(myTask)
 ```
 
 #### getting more stats
@@ -73,7 +73,7 @@ const durationNanosecs = timer(myTask)
 ...
 // get more than just the elapsed time
 const myTimer = Timer({stat: true, n: 1000})
-const stats = timer(myTask);
+const stats = myTimer(myTask);
 // ~$ myTask x 1000 took 15.474757ms (12.432us +/- 1.321us)
 console.log(stats)
 // {
