@@ -74,13 +74,15 @@ const durationNanosecs = timer(myTask)
 // get more than just the elapsed time
 const myTimer = Timer({stat: true, n: 1000})
 const stats = timer(myTask);
-// ~$ myTask x 1000 took 15.474757ms (15.474us +/- 5.482us)
+// ~$ myTask x 1000 took 15.474757ms (12.432us +/- 1.321us)
 console.log(stats)
 // {
 //   n: 1000,
 //   elapsed: 15474757,
 //   mean: 15474.757,
 //   stddev: 5482.2874,
+//   median: 12432.234,
+//   mad: 1321.21124
 // }
 ```
 
