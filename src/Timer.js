@@ -17,14 +17,16 @@ module.exports = ({log = true, stat = false, dec = 3, n = 1}={}) => {
     if (log){
       const name = task.name || "task";
       let msg = `${name} x ${n} took ${fmt(data.sum(), dec)}`;
-      if (stat) msg += ` (${fmt(data.mean(), dec)} +/- ${fmt(data.stddev(), dec)})`;
+      if (stat) msg += ` (${fmt(data.median(), dec)} +/- ${fmt(data.mad(), dec)})`;
       console.log(msg)
     }
     return stat ? {
       n: data.size(),
       elapsed: data.sum(), 
       mean: data.mean(),
-      stddev: data.stddev()
+      stddev: data.stddev(),
+      median: data.median(),
+      mad: data.mad()
     } : data.sum()
   }
 }

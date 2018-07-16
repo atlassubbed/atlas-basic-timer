@@ -87,7 +87,14 @@ describe("Timer", function(){
             }
           })
           const stats = Timer({n, log:false, stat:true})(() => calledTask++);
-          expect(stats).to.deep.equal({n, elapsed: n*(t1-t0), mean: t1-t0, stddev: 0})
+          expect(stats).to.deep.equal({
+            n, 
+            elapsed: n*(t1-t0), 
+            mean: t1-t0, 
+            stddev: 0,
+            median: t1-t0,
+            mad: 0
+          })
         }))  
       })
     })

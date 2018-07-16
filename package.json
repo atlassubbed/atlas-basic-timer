@@ -40,7 +40,7 @@
     "url": "https://github.com/atlassubbed/atlas-basic-timer.git"
   },
   "dependencies": {
-    "atlas-dataset": "^1.0.1",
+    "atlas-dataset": "^1.0.2",
     "atlas-hrtime": "^1.0.1",
     "atlas-pretty-hrtime": "^1.0.0"
   }
