@@ -33,6 +33,13 @@ describe("Timer", function(){
           expect(() => timer(task)).to.throw("task must be fn")
         })
       })
+      it("should throw error if not given a valid number of samples", function(){
+        const timer = Timer({log: false});
+        const invalidSamples = [{}, new Date(), true, /reg/, [], Infinity, -20, -Infinity];
+        invalidSamples.forEach(sample => {
+          expect(() => timer(() => {}, sample)).to.throw("samples must be non-zero, finite num")
+        })
+      })
       it("should run the task once if no number of iterations specified", function(){
         let calledTask = 0;
         Timer({log: false})(() => calledTask++)
@@ -44,7 +51,7 @@ describe("Timer", function(){
         Timer({n, log: false})(() => calledTask++)
         expect(calledTask).to.equal(n);
       })
-      it("should serially run async tasks and call the done callback when done", function(testDone){
+      it("should serially run async tasks and call the callback when done", function(testDone){
         const n = 10, task = makeAsyncJob(20)
         let calledTask = 0, numRunning = 0;
         Timer({n, log: false})(done => {
@@ -55,19 +62,34 @@ describe("Timer", function(){
             done()
           })
         }, () => {
-          expect(calledTask).to.equal(10);
+          expect(calledTask).to.equal(n);
+          testDone();
+        })
+      })
+      it("should serially run async samples and call the callback when done", function(testDone){
+        const n = 10, task = makeAsyncJob(5), s = 3;
+        let calledTask = 0, numRunning = 0;
+        Timer({n, log: false})(done => {
+          calledTask++
+          expect(++numRunning).to.equal(1)
+          task(() => {
+            expect(--numRunning).to.equal(0)
+            done()
+          })
+        }, s, () => {
+          expect(calledTask).to.equal(n*s);
           testDone();
         })
       })
     })
     describe("returns time stats for the given task", function(){
-      describe("async mode", function(){
+      describe("async tasks with a callback", function(){
         it("should return correct time diff in the done callback", function(testDone){
           const n = 10, t0 = 5, t1 = 10, task = makeAsyncJob(20);
           let calledTask = 0, calledTime = 0;
           revert = Timer.__set__({
             hrtime: oldTime => {
-              if(++calledTime){
+              if(++calledTime > 1){
                 expect(oldTime).to.equal(t0)
                 expect(calledTask).to.equal(n)
                 return t1-oldTime;
@@ -88,7 +110,7 @@ describe("Timer", function(){
           })
         })
         it("should return correct stats in the done callback if multiple samples", function(testDone){
-          const n = 10, t0 = 5, t1 = 10, task = makeAsyncJob(20), s = 3
+          const n = 10, t0 = 5, t1 = 10, task = makeAsyncJob(5), s = 3
           let calledTask = 0, calledTime = 0;
           revert = Timer.__set__({
             hrtime: oldTime => {
@@ -103,10 +125,10 @@ describe("Timer", function(){
               return t0
             }
           })
-          Timer({n, log:false})(s, done => {
+          Timer({n, log:false})(done => {
             calledTask++;
             task(done)
-          }, (errs, stats) => {
+          }, s, (errs, stats) => {
             expect(errs).to.be.an("array").with.lengthOf(0);
             expect(calledTask).to.equal(n*s)
             expect(stats).to.deep.equal({
@@ -121,7 +143,7 @@ describe("Timer", function(){
           })
         })
         it("should return encountered errors in the done callback", function(testDone){
-          const n = 10, task = makeAsyncJob(20);
+          const n = 10, task = makeAsyncJob(5);
           let calledTask = 0;
           Timer({n, log:false})(done => {
             const id = calledTask++;
@@ -136,13 +158,13 @@ describe("Timer", function(){
           })
         })
       })
-      describe("sync mode", function(){
+      describe("sync tasks with no callback", function(){
         it("should return correct time diff", cleanup(function(){
           const t0 = 5, t1 = 10, n = 10;
           let calledTask = 0, calledTime = 0;
           revert = Timer.__set__({
             "hrtime": oldTime => {
-              if(++calledTime){
+              if(++calledTime > 1){
                 expect(oldTime).to.equal(t0)
                 expect(calledTask).to.equal(n)
                 return t1-oldTime;
@@ -171,7 +193,7 @@ describe("Timer", function(){
               return t0
             }
           })
-          const stats = Timer({n, log:false})(s, () => calledTask++);
+          const stats = Timer({n, log:false})(() => calledTask++, s);
           expect(stats).to.deep.equal({
             size: s, 
             total: s*(t1-t0), 
@@ -201,7 +223,7 @@ describe("Timer", function(){
             },
             "hrtime": () => dt
           })
-          Timer({n})(s, myTask)
+          Timer({n})(myTask, s)
           expect(calledLog).to.be.true;
         }))
         it("should log stats for an anonymous task", cleanup(function(){
@@ -214,7 +236,7 @@ describe("Timer", function(){
             },
             "hrtime": () => dt
           })
-          Timer({n})(s, () => {})
+          Timer({n})(() => {}, s)
           expect(calledLog).to.be.true;
         }))
         it("should log stats in the specified precision", cleanup(function(){
@@ -227,7 +249,7 @@ describe("Timer", function(){
             },
             "hrtime": () => dt
           })
-          Timer({n, dec: 6})(s, () => {})
+          Timer({n, dec: 6})(() => {}, s)
           expect(calledLog).to.be.true;
         }))
       })

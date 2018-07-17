@@ -16,7 +16,7 @@ npm install --save atlas-basic-timer
 
 I have re-written simple timer scripts so many times, I figured I'd just write a basic timer to use. This timer is simple -- it takes a task and a number of iterations, and tells you how long it ran in nanoseconds (not guaranteed to be accurate to nanoseconds, but uses `process.hrtime` if it's available).
 
-Optionally, you can use `stat` mode to obtain **more detailed statistics**, such as the mean and standard deviation.
+Optionally, you can run each task with a number of samples, in which case the iterations will be run `samples`  times, for a total of `n * samples` tasks run.
 
 ## examples
 
@@ -42,6 +42,22 @@ const durationNanosecs = myTimer(myTask)
 const myTimer = Timer({n: 1000});
 const durationNanosecs = myTimer(myTask)
 // ~$ myTask x 1000 took 15.475ms
+```
+
+#### specify a number of samples
+
+```javascript
+...
+// we want 10 samples
+const stats = myTimer(myTask, 10);
+// ~$ myTask x 1000 (x 10) took 98.342ms (9.444ms +/- 1.840ms)
+console.log(stats)
+// { size: 10,
+//   total: 98342047,   // total elapsed time to run 1000x10
+//   mean: 9834204.7,
+//   median: 9444400.5,
+//   mad: 1839641.5,    // median absolute deviation
+//   stddev: 2416776.9310497018 }
 ```
 
 #### run async timing tests
@@ -85,23 +101,4 @@ Note that the `durationNanosecs` return value will never be rounded, only the lo
 // we don't want to log anything to the console
 const myTimer = Timer({log: false, n: 1000})
 const durationNanosecs = myTimer(myTask)
-```
-
-#### getting more stats
-
-```javascript
-...
-// get more than just the elapsed time
-const myTimer = Timer({stat: true, n: 1000})
-const stats = myTimer(myTask);
-// ~$ myTask x 1000 took 15.474757ms (12.432us +/- 1.321us)
-console.log(stats)
-// {
-//   size: 1000,
-//   total: 15474757,   // total elapsed time
-//   mean: 15474.757,
-//   stddev: 5482.2874,
-//   median: 12432.234,
-//   mad: 1321.21124    // median absolute deviation
-// }
 ```
