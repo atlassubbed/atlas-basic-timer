@@ -109,6 +109,13 @@ describe("Timer", function(){
             testDone();
           })
         })
+        it("should return time diff in the done callback if samples is 1", function(testDone){
+          const task = makeAsyncJob(20);
+          Timer({n: 10, log:false})(task, 1, (errs, elapsed) => {
+            expect(elapsed).to.be.a("number");
+            testDone();
+          })
+        })
         it("should return correct stats in the done callback if multiple samples", function(testDone){
           const n = 10, t0 = 5, t1 = 10, task = makeAsyncJob(5), s = 3
           let calledTask = 0, calledTime = 0;
@@ -176,6 +183,10 @@ describe("Timer", function(){
           })
           const deltaTime = Timer({n, log:false})(() => calledTask++);
           expect(deltaTime).to.equal(t1-t0)
+        }))
+        it("should return the time diff if samples is 1", cleanup(function(){
+          const deltaTime = Timer({n: 10, log:false})(() => {}, 1);
+          expect(deltaTime).to.be.a("number")
         }))
         it("should return the correct stats if multiple samples", cleanup(function(){
           const t0 = 5, t1 = 10, n = 10, s = 3
