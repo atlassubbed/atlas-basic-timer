@@ -1,6 +1,6 @@
 {
   "name": "atlas-basic-timer",
-  "version": "4.0.0",
+  "version": "4.0.1",
   "description": "A basic timer for performance testing which uses high resolution time and falls back to low resolution if required.",
   "scripts": {
     "test-server": "mocha --colors --watch --recursive './test/**/*.test.js'",
