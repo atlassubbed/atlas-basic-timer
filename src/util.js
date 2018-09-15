@@ -8,10 +8,10 @@ const isFn = fn => fn && typeof fn === "function";
 
 const pretty = (data, dec=3) => {
   if (isNum(data)) return fmt(data, dec);
-  let msg = fmt(data.sum(), dec);
-  if (data.size() > 1){
-    let med = fmt(data.median(), dec),
-      mad = fmt(data.mad(), dec);
+  let msg = fmt(data.total, dec);
+  if (data.size > 1){
+    let med = fmt(data.median, dec),
+      mad = fmt(data.mad, dec);
     msg += ` (${med} +/- ${mad})`
   }
   return msg;

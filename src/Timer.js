@@ -6,14 +6,14 @@ const { isPos, isFn, pretty } = require("./util")
 // rule: if class has single public method, use a factory instead.
 module.exports = ({log=true, dec=3}={}) => {
   const report = (task, data) => {
-    const isStat = data.size() > 1;
+    data = data.snapshot();
     if (log){
       let msg = task.name || "task";
-      if (isStat) msg += ` (x ${data.size()})`;
+      if (data.size > 1) msg += ` (x ${data.size})`;
       msg += ` took ${pretty(data, dec)}`;
       console.log(msg)
     }
-    return isStat ? data.snapshot() : data.sum()
+    return data.size > 1 ? data : data.total
   }
   return (task, samples, cb) => {
     if (isFn(samples)) cb = samples, samples = 1;
