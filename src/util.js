@@ -1,10 +1,13 @@
 const fmt = require("atlas-pretty-hrtime");
 
-const isPos = n => typeof n === "number" && n > 0 && isFinite(n);
+const isNum = n => typeof n === "number";
+
+const isPos = n => isNum(n) && n > 0 && isFinite(n);
 
 const isFn = fn => fn && typeof fn === "function";
 
 const pretty = (data, dec=3) => {
+  if (isNum(data)) return fmt(data, dec);
   let msg = fmt(data.sum(), dec);
   if (data.size() > 1){
     let med = fmt(data.median(), dec),
